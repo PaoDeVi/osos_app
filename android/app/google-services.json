@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1057200402045",
+    "project_id": "osos-testing-database",
+    "storage_bucket": "osos-testing-database.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057200402045:android:bb0f33e88d5cf0e59b0b14",
+        "android_client_info": {
+          "package_name": "com.example.osos_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYWPrOQ7K2pHHIC4A-3Y6nWi8ZykrQ8sI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
