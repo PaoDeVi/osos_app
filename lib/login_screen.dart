@@ -23,7 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text;
 
       try {
-        // Primero, verifica si el correo está en la colección 'Admins'
         final adminSnapshot =
             await FirebaseFirestore.instance
                 .collection('Admins')
@@ -31,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 .get();
 
         if (adminSnapshot.docs.isNotEmpty) {
-          // Si es un admin, navega a la pantalla de evaluación
           await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email,
             password: password,
@@ -45,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        // Si no está en Admins, busca en 'IOON_CLIENTE'
         final clientSnapshot =
             await FirebaseFirestore.instance
                 .collection('IOON_CLIENTE')
@@ -100,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
 
-        // Si el correo está en 'IOON_CLIENTE', navega a la pantalla de selección de DNI
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -115,70 +111,97 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  InputDecoration _greenInputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white70),
+      filled: true,
+      fillColor: const Color.fromARGB(255, 16, 50, 16),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.green, width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.lightGreenAccent, width: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 5, 44, 0),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
                 Image.asset('images/osos_logo.png', height: 150),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Iniciar sesión',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black45,
+                        offset: Offset(1, 1),
+                        blurRadius: 2,
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: "Correo electrónico",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
-                  ),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _greenInputDecoration("Correo electrónico"),
                   validator:
                       (value) =>
                           value == null || value.isEmpty
                               ? 'Ingrese su correo'
                               : null,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: "Contraseña",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
-                  ),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _greenInputDecoration("Contraseña"),
                   validator:
                       (value) =>
                           value == null || value.isEmpty
                               ? 'Ingrese su contraseña'
                               : null,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 12,
+                    ),
                   ),
-                  child: Text(
+                  child: const Text(
                     "Iniciar sesión",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -186,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       MaterialPageRoute(builder: (context) => RegisterScreen()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "¿No tienes una cuenta? Regístrate aquí",
                     style: TextStyle(
                       color: Colors.blueAccent,

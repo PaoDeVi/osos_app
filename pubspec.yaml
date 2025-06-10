@@ -42,6 +42,7 @@ dependencies:
   logger: ^2.5.0
   fl_chart: ^1.0.0
   google_fonts: ^6.2.1
+  image_picker: ^1.1.2
   
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
       - images/osos_logo.png
+      - images/holder_foto.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

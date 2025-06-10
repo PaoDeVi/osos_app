@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logger/logger.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 final _log = Logger();
+File? _selectedImage;
+final ImagePicker _picker = ImagePicker();
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title, required this.dni});
@@ -44,6 +48,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+    });
   }
 
   Future<void> fetchUserDataByDni() async {
@@ -379,8 +398,65 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Nueva sección: Foto del Alumno
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              'Foto del Alumno',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 3, 105, 7),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GestureDetector(
+              onTap: _pickImage,
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade400),
+                      image: DecorationImage(
+                        image:
+                            _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : const AssetImage('images/holder_foto.jpg')
+                                    as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  if (_selectedImage != null)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.red),
+                        onPressed: _removeImage,
+                        tooltip: 'Quitar imagen',
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Información administrativa existente
           buildTitledGrid('Información administrativa', fields),
           const SizedBox(height: 20),
+
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -393,6 +469,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
           ),
           const SizedBox(height: 10),
+
+          // Tabla de pagos
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: StreamBuilder<QuerySnapshot>(
@@ -433,14 +511,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       headingRowColor: WidgetStateProperty.all(
-                        const Color.fromARGB(255, 2, 63, 4), // Verde oscuro
+                        const Color.fromARGB(255, 2, 63, 4),
                       ),
                       headingTextStyle: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                       dataRowColor: WidgetStateProperty.resolveWith<Color?>((
-                        Set<WidgetState> states,
+                        states,
                       ) {
                         if (states.contains(WidgetState.hovered)) {
                           return const Color.fromARGB(255, 27, 104, 30);
@@ -480,6 +558,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               },
             ),
           ),
+
           const SizedBox(height: 20),
         ],
       ),
